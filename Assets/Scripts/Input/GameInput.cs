@@ -8,7 +8,7 @@ public enum Controls
     SHIP_X_AXIS = 1,
 };
 
-public class GameInput : MonoBehaviour
+public class GameInput
 {
 
     public static Dictionary<KeyCode, Controls> KeyMappings = new Dictionary<KeyCode, Controls>();
@@ -79,7 +79,7 @@ public class GameInput : MonoBehaviour
 
         foreach(KeyValuePair<KeyCode, Controls> entry in KeyMappings)
         {
-            if (entry.Value.Equals(control))
+            if (entry.Value.Equals(control) & !entry.Value.Equals(Controls.UNASSIGNED))
             {
                 key = entry.Key;
             }
@@ -98,14 +98,14 @@ public class GameInput : MonoBehaviour
                 Controls value = KeyMappings[entry];
                 if (value == control)
                 {
-                    Debug.Log(string.Format("Duplicate controls, unbinding '", value, "' from key '", entry));
+                    Debug.Log(string.Format("Duplicate controls, unbinding '{0}' from key {1}", value, entry));
                     KeyMappings[entry] = Controls.UNASSIGNED;
                     return;
                 }
             }
 
             KeyMappings[key] = control;
-            Debug.Log(string.Format("Succesfully bound '", control, "' to key ", key));
+            Debug.Log(string.Format("Succesfully bound '{0}' to key {1}", control, key));
         } else
         {
             foreach (KeyCode entry in keys)
@@ -113,15 +113,23 @@ public class GameInput : MonoBehaviour
                 Controls value = KeyMappings[entry];
                 if (value == control)
                 {
-                    Debug.Log(string.Format("Duplicate controls, unbinding '", value, "' from key '", entry));
+                    Debug.Log(string.Format("Duplicate controls, unbinding '{0}' from key '{1}'", value, entry));
                     KeyMappings[entry] = Controls.UNASSIGNED;
                     return;
                 }
             }
 
             KeyMappings.Add(key, control);
-            Debug.Log(string.Format("Succesfully bound '", control, "' to key ", key));
+            Debug.Log(string.Format("Succesfully bound '{0}' to key {1}", control, key));
         }
+    }
+
+    public static void UnbindAll()
+    {
+        KeyMappings.Clear();
+        KeyStates.Clear();
+
+        Debug.Log("All bindings have been reset");
     }
 
     private static Controls GetControlForKey(KeyCode key)
