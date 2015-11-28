@@ -16,7 +16,7 @@ namespace Assets.Scripts.Commands
 	{
 		public CommandResult Execute(string command, params object[] parameters)
 		{
-			MethodInfo info = typeof(CommandManager).GetMethod(command);
+			MethodInfo info = typeof(CommandManager).GetMethods().FirstOrDefault(m => m.Name.ToUpper() == command.ToUpper());
 
 			if (info == null)
 			{
