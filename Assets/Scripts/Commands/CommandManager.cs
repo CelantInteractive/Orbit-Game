@@ -12,7 +12,7 @@ namespace Assets.Scripts.Commands
 		Failure
 	}
 
-	public class CommandManager
+	public partial class CommandManager
 	{
 		public CommandResult Execute(string command, params object[] parameters)
 		{
@@ -45,12 +45,6 @@ namespace Assets.Scripts.Commands
 			}
 
 			return (CommandResult)info.Invoke(this, newParams.Length > 0 ? newParams : null);
-		}
-
-		public CommandResult Bind(char key)
-		{
-			Debug.Log("BINDING KEY: " + key);
-			return CommandResult.Success;
 		}
 	}
 }
