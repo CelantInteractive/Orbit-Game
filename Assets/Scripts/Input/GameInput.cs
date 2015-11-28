@@ -8,14 +8,16 @@ public enum Controls
     SHIP_X_AXIS = 1,
 };
 
-public class GameInput
+public class GameInput : MonoBehaviour
 {
 
     public static Dictionary<KeyCode, Controls> KeyMappings = new Dictionary<KeyCode, Controls>();
 
     public static Dictionary<Controls, bool> KeyStates = new Dictionary<Controls, bool>();
 
-    void Update()
+	public static Controls BindNext = Controls.UNASSIGNED;
+
+    void OnGUI()
     {
         Event curEvent = Event.current;
 
@@ -23,7 +25,7 @@ public class GameInput
         {
             case (EventType.KeyDown):
                 {
-                    Controls control = GetControlForKey(curEvent.keyCode);
+                    Controls control = GetMappingForKey(curEvent.keyCode);
                     if (KeyStates.ContainsKey(control))
                     {
                         KeyStates[control] = true;
@@ -33,12 +35,12 @@ public class GameInput
                         KeyStates.Add(control, true);
                     }
 
-                    Debug.Log(string.Format("Key for ", control, " is down"));
+                    Debug.Log(string.Format("Key for {0} is down", control));
                 }
                 break;
             case (EventType.KeyUp):
                 {
-                    Controls control = GetControlForKey(curEvent.keyCode);
+                    Controls control = GetMappingForKey(curEvent.keyCode);
                     if (KeyStates.ContainsKey(control))
                     {
                         KeyStates[control] = false;
@@ -48,7 +50,7 @@ public class GameInput
                         KeyStates.Add(control, false);
                     }
 
-                    Debug.Log(string.Format("Key for ", control, " is up"));
+                    Debug.Log(string.Format("Key for {0} is up", control));
                 }
                 break;
         }
@@ -132,7 +134,7 @@ public class GameInput
         Debug.Log("All bindings have been reset");
     }
 
-    private static Controls GetControlForKey(KeyCode key)
+    private static Controls GetMappingForKey(KeyCode key)
     {
         if (KeyMappings.ContainsKey(key))
         {
