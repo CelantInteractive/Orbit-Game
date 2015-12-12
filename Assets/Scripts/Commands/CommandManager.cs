@@ -26,7 +26,7 @@ namespace Assets.Scripts.Commands
 			ParameterInfo[] paramInfo = info.GetParameters();
 			if (parameters.Length < paramInfo.Count(p => !p.IsOptional))
 			{
-				Debug.LogError($"Not enough parameters supplied. Expected {paramInfo.Length} but received {parameters.Length}.");
+				Debug.LogErrorFormat("Not enough parameters supplied. Expected {0} but received {1}.", paramInfo.Length, parameters.Length);
 				return CommandResult.Failure;
 			}
 
