@@ -23,7 +23,7 @@ public class GameInputTest : MonoBehaviour {
     [Test]
     public void AssignKeyTest()
     {
-        GameInput.BindControl(Controls.SHIP_X_AXIS, KeyCode.W);
+        GameInput.Bind(Controls.SHIP_X_AXIS, KeyCode.W);
 
         var key = GameInput.GetBinding(Controls.SHIP_X_AXIS);
 

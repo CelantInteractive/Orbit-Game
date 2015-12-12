@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Orbit.Scripts.Commands;
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// A console to display Unity's debug logs in-game.
@@ -16,11 +17,6 @@ class Console : MonoBehaviour
 	#region Inspector Settings
 
 	/// <summary>
-	/// The hotkey to show and hide the console window.
-	/// </summary>
-	public KeyCode toggleKey = KeyCode.BackQuote;
-
-	/// <summary>
 	/// Whether to only keep a certain number of logs.
 	///
 	/// Setting this can be helpful if memory usage is a concern.
@@ -35,9 +31,12 @@ class Console : MonoBehaviour
 	#endregion
 
 	readonly List<Log> logs = new List<Log>();
+	public string input;
 	Vector2 scrollPosition;
 	bool visible;
 	bool follow;
+
+	CommandManager commandManager = new CommandManager();
 
 	// Visual elements:
 
@@ -67,9 +66,15 @@ class Console : MonoBehaviour
 		Application.logMessageReceived -= HandleLog;
 	}
 
+	void Start()
+	{
+		GameInput.Bind(Controls.CONSOLE, KeyCode.BackQuote);
+		GameInput.Bind(Controls.SUBMIT, KeyCode.Return);
+	}
+
 	void Update()
 	{
-		if (Input.GetKeyDown(toggleKey))
+		if (GameInput.GetKeyDown(Controls.CONSOLE))
 		{
 			visible = !visible;
 		}
@@ -86,6 +91,19 @@ class Console : MonoBehaviour
 			return;
 		}
 
+		if (visible)
+		{
+			Event e = Event.current; // Manually handle the keyDown event, as the TextField eats up the event
+			if (Event.current.isKey)
+			{
+				if (Event.current.keyCode == KeyCode.Return)
+				{
+					ProcessCommand(input);
+					input = "";
+				}
+			}
+		}
+
 		windowRect = GUILayout.Window(1, windowRect, DrawConsoleWindow, windowTitle);
 	}
 
@@ -96,6 +114,7 @@ class Console : MonoBehaviour
 	void DrawConsoleWindow(int windowID)
 	{
 		DrawLogsList();
+		DrawInput();
 		DrawToolbar();
 
 		// Allow the window to be dragged by its title bar.
@@ -116,7 +135,7 @@ class Console : MonoBehaviour
 
 
 			GUI.contentColor = logTypeColors[log.type];
-			GUILayout.Label(log.message, GUILayout.Si);
+			GUILayout.Label(log.message);
 		}
 
 		GUILayout.EndScrollView();
@@ -125,6 +144,17 @@ class Console : MonoBehaviour
 		GUI.contentColor = Color.white;
 	}
 
+	/// <summary>
+	/// Displays options for filtering and changing the logs list.
+	/// </summary>
+	void DrawInput()
+	{
+		GUILayout.BeginHorizontal();
+
+		input = GUILayout.TextField(input);
+
+		GUILayout.EndHorizontal();
+	}
 
 	/// <summary>
 	/// Displays options for filtering and changing the logs list.
@@ -176,5 +206,21 @@ class Console : MonoBehaviour
 		}
 
 		logs.RemoveRange(0, amountToRemove);
+	}
+
+	void ProcessCommand(string str)
+	{
+		string command = str.Substring(0, str.IndexOf(' '));
+		Debug.LogFormat("executing '{0}'", command);
+		/*
+		string[] data = str.Split(' ');
+		string[] parameters;
+
+		if (data.Length >= 1)
+		{
+			string command = data[0];
+			foreach (string param in data)
+			commandManager.Execute();
+		}*/
 	}
 }
