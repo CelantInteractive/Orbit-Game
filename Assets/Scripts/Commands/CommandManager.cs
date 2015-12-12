@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace Assets.Scripts.Commands
+namespace Orbit.Scripts.Commands
 {
 	public enum CommandResult
 	{
@@ -45,6 +45,12 @@ namespace Assets.Scripts.Commands
 			}
 
 			return (CommandResult)info.Invoke(this, newParams.Length > 0 ? newParams : null);
+		}
+
+		public CommandResult Echo(string message)
+		{
+			Debug.Log(message);
+			return CommandResult.Success;
 		}
 	}
 }
