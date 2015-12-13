@@ -1,6 +1,7 @@
 ﻿using Orbit.Scripts.Commands;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// A console to display Unity's debug logs in-game.
@@ -93,7 +94,7 @@ class Console : MonoBehaviour
 
 		if (visible)
 		{
-			Event e = Event.current; // Manually handle the keyDown event, as the TextField eats up the event
+			// Manually handle the keyDown event, as the TextField eats up the event
 			if (Event.current.isKey)
 			{
 				if (Event.current.keyCode == KeyCode.Return)
@@ -211,23 +212,18 @@ class Console : MonoBehaviour
 	void ProcessCommand(string str)
 	{
 		string command = "";
-		string[] parameters = new string[0];
+		string[] parameters;
 
-		if (str.Length < 1)
+		if (string.IsNullOrEmpty(str))
 		{
 			return;
 		}
 
-		if(str.IndexOf(' ') == -1) {
-			command = str;
-		} else
-		{
-			command = str.Substring(0, str.IndexOf(' '));
-			str.Remove(0, str.IndexOf(' '));
-			parameters = str.Split(' ');
-		}
+		parameters = str.Split(' ');
+		command = parameters[0];
+		parameters = parameters.Skip(1).ToArray();
 
-		var result = commandManager.Execute(command, parameters);
+		CommandResult result = commandManager.Execute(command, parameters);
 
 		if (result == CommandResult.NotFound)
 		{
