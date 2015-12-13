@@ -19,9 +19,6 @@ public class GameInput : MonoBehaviour
 	public static Dictionary<Controls, int> KeyStateDown = new Dictionary<Controls, int>();
 	public static Dictionary<Controls, int> KeyStateUp = new Dictionary<Controls, int>();
 
-
-	public static Controls BindNext = Controls.UNASSIGNED;
-
 	void Start()
 	{
 		foreach(Controls control in Enum.GetValues(typeof(Controls)))
@@ -149,6 +146,11 @@ public class GameInput : MonoBehaviour
 		return key;
 	}
 
+	public static Dictionary<KeyCode, Controls> GetAllBindings()
+	{
+		return KeyMappings;
+	}
+
 	public static void Bind(Controls control, KeyCode key)
 	{
 		var keys = new List<KeyCode>(KeyMappings.Keys);
@@ -167,7 +169,7 @@ public class GameInput : MonoBehaviour
 			}
 
 			KeyMappings[key] = control;
-			Debug.Log(string.Format("Succesfully bound '{0}' to key {1}", control, key));
+			Debug.Log(string.Format("Bound '{0}' to key {1}", control, key));
 		} else
 		{
 			foreach (KeyCode entry in keys)
@@ -182,19 +184,18 @@ public class GameInput : MonoBehaviour
 			}
 
 			KeyMappings.Add(key, control);
-			Debug.Log(string.Format("Succesfully bound '{0}' to key {1}", control, key));
+			Debug.Log(string.Format("Bound '{0}' to key {1}", control, key));
 		}
 	}
 
 	public static void Unbind(KeyCode key)
 	{
-		var keys = new List<KeyCode>(KeyMappings.Keys);
-
 		if (KeyMappings.ContainsKey(key))
 		{
 			Controls control = KeyMappings[key];
 			KeyStates[control] = false;
-			KeyMappings[key] = Controls.UNASSIGNED;
+			KeyMappings.Remove(key);
+			Debug.Log("Unbound key");
 			return;
 		}
 

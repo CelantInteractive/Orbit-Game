@@ -1,4 +1,4 @@
-﻿using Orbit.Scripts.Commands;
+﻿using Orbit.Commands;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -211,6 +211,7 @@ class Console : MonoBehaviour
 
 	void ProcessCommand(string str)
 	{
+		Debug.Log(str);
 		string command = "";
 		string[] parameters;
 

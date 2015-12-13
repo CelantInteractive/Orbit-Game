@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace Orbit.Scripts.Commands
+namespace Orbit.Commands
 {
 	public enum CommandResult
 	{
@@ -38,7 +38,24 @@ namespace Orbit.Scripts.Commands
 				{
 					try
 					{
-						newParams[i] = Convert.ChangeType(parameters[i], t);
+						//is using 'params'
+						if (paramInfo[i].GetCustomAttributes(typeof(ParamArrayAttribute), false).Length > 0)
+						{
+							Type elementType = t.GetElementType();
+
+							Array arr = Array.CreateInstance(elementType, parameters.Length - i);
+							for (int j = i; j < parameters.Length; j++)
+							{
+								arr.SetValue(Convert.ChangeType(parameters[j], elementType), j - i);
+							}
+
+							newParams[i] = arr;
+							break;
+						}
+						else
+						{
+							newParams[i] = Convert.ChangeType(parameters[i], t);
+						}
 					}
 					catch (InvalidCastException)
 					{
@@ -66,7 +83,7 @@ namespace Orbit.Scripts.Commands
 
 		public CommandResult Echo(params string[] parameters)
 		{
-			Debug.Log(String.Concat(parameters));
+			Debug.Log(String.Join(" ", parameters));
 			return CommandResult.Success;
 		}
 	}

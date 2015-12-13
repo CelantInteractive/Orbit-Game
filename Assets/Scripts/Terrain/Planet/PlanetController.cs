@@ -1,97 +1,99 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
 
-public class PlanetController : MonoBehaviour {
-    public float Scale = 1f;
-    public int Seed = 0;
+namespace Orbit.Terrain
+{
+	public class PlanetController : MonoBehaviour
+	{
+		public float Scale = 1f;
+		public int Seed = 0;
+		public bool DisplayVerts = false;
+		public GameObject ChunkPrefab = null;
 
-    private byte[,,] WorldData = new byte[32, 64, 64];
-    private int SizeX = 0;
-    private int SizeZ = 0;
+		private Dictionary<Vector3, GameObject> Chunks = new Dictionary<Vector3, GameObject>();
 
-    private NoiseGenerator noise;
+		private NoiseGenerator noise;
 
-    void Start()
-    {
-        noise = new NoiseGenerator();
+		void Start()
+		{
+			if (Seed == 0)
+			{
+				System.Random r = new System.Random();
 
-        if (Seed == 0)
-        {
-            System.Random r = new System.Random();
+				Seed = r.Next(int.MaxValue);
+				NoiseGenerator.Seed = Seed;
+			}
+		}
 
-            Seed = r.Next(int.MaxValue);
-            NoiseGenerator.Seed = Seed;
-        }
-    }
+		public Chunk CreateChunk(int x, int z)
+		{
+			Vector3 pos = new Vector3(x, 0, z);
 
-    public void GenerateChunk(int xpos, int zpos)
-    {
-        int StartX = 16 * (xpos - 1);
-        int StartZ = 16 * (zpos - 1);
+			if (Chunks.ContainsKey(pos))
+			{
+				return Chunks[new Vector3(x, 0, z)].GetComponent<Chunk>();
+			}
 
-        for (int z=StartZ; z<StartZ+16; z++)
-        {
-            for (int x=StartX; x<StartX+16; x++)
-            {
-                double Random = noise.Noise(x, z) * Scale;
-                int Height = Mathf.Clamp((int)((Random + 1) * 32), 0, 64);
+			GameObject chunk = Instantiate(ChunkPrefab) as GameObject;
+			chunk.transform.parent = transform;
+			chunk.transform.position = transform.TransformPoint(new Vector3(x * 16, 0, z * 16));
 
-                WorldData[x, Height, z] = 1;
-                WorldData[x, 0, z] = 255;
-            }
-        }
-    }
+			Chunk chunkScript = chunk.GetComponent<Chunk>();
+			chunkScript.GenerateChunk(x, z, Scale);
+			chunkScript.GenerateMesh();
 
-    public byte[,,] GetChunk(int xpos, int zpos)
-    {
-        byte[,,] Chunk = new byte[16, 64, 16];
+			Chunks.Add(pos, chunk);
+			return chunkScript;
+		}
 
-        int StartX = 16 * (xpos - 1);
-        int StartZ = 16 * (zpos - 1);
+		public byte[,,] GetChunk(Vector3 pos)
+		{
+			GameObject chunk = null;
 
-        for (int z = StartZ; z < StartZ + 16; z++)
-        {
-            for (int y = 0; y < WorldData.GetLength(1) - 1; y++)
-            {
-                for (int x = StartX; x < StartX + 16; x++)
-                {
-                    Chunk[x, y, z] = WorldData[x, y, z];
-                }
-            }
-        }
+			if (!Chunks.ContainsKey(pos))
+			{
+				return null;
+			}
 
-        return Chunk;
-    }
+			chunk = Chunks[pos];
 
-    /*
-    void OnDrawGizmosSelected()
-    {
-        if(Application.isPlaying)
-        {
-            for (int x = 0; x < WorldData.GetLength(0)-1; x++)
-            {
-                for (int y = 0; y < WorldData.GetLength(1)-1; y++)
-                {
-                    for (int z = 0; z < WorldData.GetLength(2)-1; z++)
-                    {
-                        switch (WorldData[x,y,z])
-                        {
-                            case 0:
-                                break;
-                            case 1:
-                                Gizmos.color = Color.yellow;
-                                Gizmos.DrawSphere(new Vector3(x, y, z), 0.1f);
-                                break;
-                            case 255:
-                                Gizmos.color = Color.red;
-                                //Gizmos.DrawSphere(new Vector3(x, y, z), 0.1f);
-                                break;
-                            
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
+			return chunk.GetComponent<Chunk>().GetChunkData();
+		}
+
+		void OnDrawGizmosSelected()
+		{
+			if (Application.isPlaying && DisplayVerts)
+			{
+				foreach (KeyValuePair<Vector3, GameObject> chunk in Chunks)
+				{
+					byte[,,] chunkData = GetChunk(chunk.Key);
+					Vector3 position = chunk.Key;
+
+					for (int x = 0; x < chunkData.GetLength(0); x++)
+					{
+						for (int y = 0; y < chunkData.GetLength(1); y++)
+						{
+							for (int z = 0; z < chunkData.GetLength(2); z++)
+							{
+								switch (chunkData[x, y, z])
+								{
+									case 0:
+										break;
+									case 1:
+										Gizmos.color = Color.yellow;
+										Gizmos.DrawSphere(transform.TransformPoint(new Vector3(x + (position.x * 16), y + (position.y * 16), z + (position.z * 16))), 0.1f);
+										break;
+									case 255:
+										//Gizmos.color = Color.red;
+										//Gizmos.DrawSphere(transform.TransformPoint(new Vector3(x + (position.x * 16), y + (position.y * 16), z + (position.z * 16))), 0.1f);
+										break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

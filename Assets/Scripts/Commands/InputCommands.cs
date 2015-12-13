@@ -2,14 +2,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace Orbit.Scripts.Commands
+namespace Orbit.Commands
 {
 	public partial class CommandManager
 	{
 
 		public CommandResult Bind(string control, string key)
 		{
-			Debug.Log("BINDING KEY: " + key);
 			Controls controlValue = (Controls) Enum.Parse(typeof(Controls), control, true);
 			KeyCode keyValue = (KeyCode)Enum.Parse(typeof(KeyCode), key, true);
 
@@ -30,7 +29,6 @@ namespace Orbit.Scripts.Commands
 
 		public CommandResult Unbind(string key)
 		{
-			Debug.Log("UNBINDING KEY: " + key);
 			KeyCode keyValue = (KeyCode)Enum.Parse(typeof(KeyCode), key, true);
 
 			if (!Enum.IsDefined(typeof(KeyCode), keyValue))
@@ -40,6 +38,18 @@ namespace Orbit.Scripts.Commands
 			}
 
 			GameInput.Unbind(keyValue);
+			return CommandResult.Success;
+		}
+
+		public CommandResult Bindings()
+		{
+			Dictionary<KeyCode, Controls> bindings = GameInput.GetAllBindings();
+
+			foreach (KeyValuePair<KeyCode, Controls> binding in bindings)
+			{
+				Debug.LogFormat("{0}: {1}", binding.Value, binding.Key);
+			}
+
 			return CommandResult.Success;
 		}
 	}
