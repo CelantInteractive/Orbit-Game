@@ -36,7 +36,24 @@ namespace Orbit.Scripts.Commands
 				Type t = paramInfo[i].ParameterType;
 				if (parameters[i].GetType() != t)
 				{
-					newParams[i] = Convert.ChangeType(parameters[i], t);
+					try
+					{
+						newParams[i] = Convert.ChangeType(parameters[i], t);
+					}
+					catch (InvalidCastException)
+					{
+						Debug.LogErrorFormat("Invalid parameter type provided at index {0}. Expected parameter of type {1} but received type {2}.",
+							i, t, parameters[i].GetType());
+
+						return CommandResult.Failure;
+					}
+					catch (FormatException)
+					{
+						Debug.LogErrorFormat("Invalid parameter format provided at index {0}. Expected format for parameter of type {1} but received '{2}'.",
+							i, t, parameters[i]);
+
+						return CommandResult.Failure;
+					}
 				}
 				else
 				{
