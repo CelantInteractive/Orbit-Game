@@ -46,7 +46,7 @@ public class GameInput : MonoBehaviour
 							KeyStateDown.Add(control, Time.frameCount);
 						}
 						KeyStates[control] = true;
-						Debug.Log(string.Format("Key for {0} is down", control));
+						//Debug.Log(string.Format("Key for {0} is down", control));
 					}
 				}
 				break;
@@ -67,7 +67,7 @@ public class GameInput : MonoBehaviour
 		}
 	}
 
-	void Update()
+	void FixedUpdate()
 	{
 		var curFrame = Time.frameCount;
 		var keysDown = new List<Controls>(KeyStateDown.Keys);

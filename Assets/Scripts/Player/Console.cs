@@ -210,17 +210,28 @@ class Console : MonoBehaviour
 
 	void ProcessCommand(string str)
 	{
-		string command = str.Substring(0, str.IndexOf(' '));
-		Debug.LogFormat("executing '{0}'", command);
-		/*
-		string[] data = str.Split(' ');
-		string[] parameters;
+		string command = "";
+		string[] parameters = new string[0];
 
-		if (data.Length >= 1)
+		if (str.Length < 1)
 		{
-			string command = data[0];
-			foreach (string param in data)
-			commandManager.Execute();
-		}*/
+			return;
+		}
+
+		if(str.IndexOf(' ') == -1) {
+			command = str;
+		} else
+		{
+			command = str.Substring(0, str.IndexOf(' '));
+			str.Remove(0, str.IndexOf(' '));
+			parameters = str.Split(' ');
+		}
+
+		var result = commandManager.Execute(command, parameters);
+
+		if (result == CommandResult.NotFound)
+		{
+			Debug.LogFormat("command '{0}' is undefined", command);
+		}
 	}
 }

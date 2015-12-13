@@ -47,9 +47,9 @@ namespace Orbit.Scripts.Commands
 			return (CommandResult)info.Invoke(this, newParams.Length > 0 ? newParams : null);
 		}
 
-		public CommandResult Echo(string message)
+		public CommandResult Echo(string command, params string[] parameters)
 		{
-			Debug.Log(message);
+			Debug.Log(String.Concat(parameters));
 			return CommandResult.Success;
 		}
 	}
