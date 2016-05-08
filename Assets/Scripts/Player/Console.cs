@@ -71,6 +71,7 @@ class Console : MonoBehaviour
 	{
 		GameInput.Bind(Controls.CONSOLE, KeyCode.BackQuote);
 		GameInput.Bind(Controls.SUBMIT, KeyCode.Return);
+		GameInput.Bind(Controls.SHIP_X_AXIS_POS, KeyCode.W);
 	}
 
 	void Update()

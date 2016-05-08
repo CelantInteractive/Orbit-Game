@@ -7,7 +7,12 @@ public enum Controls
 	UNASSIGNED = 0,
 	CONSOLE = 1,
 	SUBMIT = 2,
-	SHIP_X_AXIS = 3
+	SHIP_X_AXIS_POS = 3,
+	SHIP_X_AXIS_NEG = 4,
+	SHIP_Y_AXIS_POS = 5,
+	SHIP_Y_AXIS_NEG = 6,
+	SHIP_Z_AXIS_POS = 7,
+	SHIP_Z_AXIS_NEG = 8,
 };
 
 public class GameInput : MonoBehaviour

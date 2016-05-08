@@ -15,7 +15,7 @@ public class GameInputTest : MonoBehaviour {
     [Test]
     public void GetUnassignedKeyTest()
     {
-        var key = GameInput.GetBinding(Controls.SHIP_X_AXIS);
+        var key = GameInput.GetBinding(Controls.SHIP_X_AXIS_POS);
 
         Assert.AreEqual(KeyCode.None, key);
     }
@@ -23,9 +23,9 @@ public class GameInputTest : MonoBehaviour {
     [Test]
     public void AssignKeyTest()
     {
-        GameInput.Bind(Controls.SHIP_X_AXIS, KeyCode.W);
+        GameInput.Bind(Controls.SHIP_X_AXIS_POS, KeyCode.W);
 
-        var key = GameInput.GetBinding(Controls.SHIP_X_AXIS);
+        var key = GameInput.GetBinding(Controls.SHIP_X_AXIS_POS);
 
         Assert.AreEqual(KeyCode.W, key);
     }
