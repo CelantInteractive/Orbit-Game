@@ -31,12 +31,22 @@ public class Chunk : MonoBehaviour
             {
                 for (int z = 0; z < CHUNK_SIZE; z++)
                 {
-                    Blocks[x, y, z] = new BlockAir();
+                    if ((x == 0 || x == 16) || (y == 0 || y == 16) || (z == 0 || z == 16))
+                    {
+                        Blocks[x, y, z] = new BlockAir();
+                        continue;
+                    }
+                    if (Random.value > 0.5f)
+                    {
+                        Blocks[x, y, z] = new BlockAir();
+                    } else
+                    {
+                        Blocks[x, y, z] = new Block();
+                    }
                 }
             }
         }
-
-        Blocks[3, 5, 2] = new Block();
+        
         UpdateChunk();
     }
 
@@ -47,6 +57,7 @@ public class Chunk : MonoBehaviour
 
     public Block GetBlock(int x, int y, int z)
     {
+        Debug.Log(string.Format("Fetching x:{0}, y:{1}, z:{2}", x, y, z));
         return Blocks[x, y, z];
     }
 
@@ -71,5 +82,14 @@ public class Chunk : MonoBehaviour
         Filter.mesh.Clear();
         Filter.mesh.vertices = meshData.Verticies.ToArray();
         Filter.mesh.triangles = meshData.Tris.ToArray();
+        Filter.mesh.RecalculateNormals();
+
+        Coll.sharedMesh = null;
+        Mesh mesh = new Mesh();
+        mesh.vertices = meshData.ColVerticies.ToArray();
+        mesh.triangles = meshData.ColTris.ToArray();
+        mesh.RecalculateNormals();
+
+        Coll.sharedMesh = mesh;
     }
 }
