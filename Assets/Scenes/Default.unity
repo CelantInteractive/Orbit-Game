@@ -854,6 +854,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ChunkPrefab: {fileID: 104518, guid: 6193e643b07b91d47bc3ca8cdabe87a5, type: 2}
+  Radius: 128
+  GenerationComplete: 0
 --- !u!4 &1678995471
 Transform:
   m_ObjectHideFlags: 0
@@ -861,7 +863,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1678995469}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 20.9, z: 7.2}
+  m_LocalPosition: {x: 0, y: 50.72, z: -310.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

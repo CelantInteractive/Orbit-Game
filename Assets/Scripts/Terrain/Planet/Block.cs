@@ -26,39 +26,40 @@ namespace Orbit.Terrain.Planet
 
         public virtual MeshData Blockdata(Chunk chunk, int x, int y, int z, MeshData meshData)
         {
-            meshData.UseRenderDataForCol = true;
 
-            if (!chunk.GetBlock(x, y + 1, z).IsSolid(Direction.Down))
-            {
-                meshData = FaceDataUp(chunk, x, y, z, meshData);
-            }
+			meshData.UseRenderDataForCol = true;
 
-            if (!chunk.GetBlock(x, y - 1, z).IsSolid(Direction.Up))
-            {
-                meshData = FaceDataDown(chunk, x, y, z, meshData);
-            }
+			if (!chunk.GetBlock(x, y + 1, z).IsSolid(Direction.Down))
+			{
+				meshData = FaceDataUp(chunk, x, y, z, meshData);
+			}
 
-            if (!chunk.GetBlock(x, y, z + 1).IsSolid(Direction.South))
-            {
-                meshData = FaceDataNorth(chunk, x, y, z, meshData);
-            }
+			if (!chunk.GetBlock(x, y - 1, z).IsSolid(Direction.Up))
+			{
+				meshData = FaceDataDown(chunk, x, y, z, meshData);
+			}
 
-            if (!chunk.GetBlock(x, y, z - 1).IsSolid(Direction.North))
-            {
-                meshData = FaceDataSouth(chunk, x, y, z, meshData);
-            }
+			if (!chunk.GetBlock(x, y, z + 1).IsSolid(Direction.South))
+			{
+				meshData = FaceDataNorth(chunk, x, y, z, meshData);
+			}
 
-            if (!chunk.GetBlock(x + 1, y, z).IsSolid(Direction.West))
-            {
-                meshData = FaceDataEast(chunk, x, y, z, meshData);
-            }
+			if (!chunk.GetBlock(x, y, z - 1).IsSolid(Direction.North))
+			{
+				meshData = FaceDataSouth(chunk, x, y, z, meshData);
+			}
 
-            if (!chunk.GetBlock(x - 1, y, z).IsSolid(Direction.East))
-            {
-                meshData = FaceDataWest(chunk, x, y, z, meshData);
-            }
+			if (!chunk.GetBlock(x + 1, y, z).IsSolid(Direction.West))
+			{
+				meshData = FaceDataEast(chunk, x, y, z, meshData);
+			}
 
-            return meshData;
+			if (!chunk.GetBlock(x - 1, y, z).IsSolid(Direction.East))
+			{
+				meshData = FaceDataWest(chunk, x, y, z, meshData);
+			}
+
+			return meshData;
         }
 
         protected virtual MeshData FaceDataNorth(Chunk chunk, int x, int y, int z, MeshData meshData)

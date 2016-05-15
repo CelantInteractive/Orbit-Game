@@ -12,20 +12,28 @@ namespace Orbit.Terrain.Planet
 
         public GameObject ChunkPrefab;
 
+		public int Radius = 16;
+
+		public bool GenerationComplete = false;
+
         // Use this for initialization
         void Start()
         {
-            for (int x = 0; x < 1; x++)
+			int ChunkCount = Mathf.CeilToInt(Radius / Chunk.CHUNK_SIZE);
+
+			for (int x = -ChunkCount; x < ChunkCount; x++)
             {
 				Debug.Log (string.Format("Planet creation is on iteration x:{0}", x));
-                for (int y = 0; y < 1; y++)
+				for (int y = -ChunkCount; y < ChunkCount; y++)
                 {
-                    for (int z = 0; z < 1; z++)
+					for (int z = -ChunkCount; z < ChunkCount; z++)
                     {
                         CreateChunk(x * 16, y * 16, z * 16);
                     }
                 }
             }
+
+			GenerationComplete = true;
         }
 
         // Update is called once per frame
@@ -55,7 +63,8 @@ namespace Orbit.Terrain.Planet
                 {
                     for (int zi = 0; zi < 16; zi++)
                     {
-                        if (yi <= 7)
+						if (( pos.x-center.x ) ^2 + (pos.y-center.y) ^2 + (pos.z-center.z) ^ 2 < radius^2)
+                        if (yi <= 16)
                         {
                             SetBlock(x + xi, y + yi, z + zi, new Block());
                         }
@@ -67,6 +76,8 @@ namespace Orbit.Terrain.Planet
                     }
                 }
             }
+
+			Debug.Log (string.Format ("Finished chunk generation for x:{0}, y:{1}, z:{2}", worldPos.x, worldPos.y, worldPos.z));
         }
 
         public Chunk GetChunk(int x, int y, int z)
@@ -107,7 +118,7 @@ namespace Orbit.Terrain.Planet
 
             if (chunk != null)
             {
-                chunk.SetBlock(x - chunk.Pos.x, y - chunk.Pos.y, z - chunk.Pos.y, block);
+                chunk.SetBlock(x - chunk.Pos.x, y - chunk.Pos.y, z - chunk.Pos.z, block);
                 chunk.NeedsUpdate = true;
             }
         }
