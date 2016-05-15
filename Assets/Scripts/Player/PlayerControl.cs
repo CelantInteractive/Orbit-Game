@@ -72,12 +72,15 @@ public class PlayerControl : MonoBehaviour
 	void Update()
 	{
 		// fly
-		if(InputManager.GetButtonDown ("Noclip"))
+		if (InputManager.GetButtonDown ("Noclip")) {
 			fly = !fly;
+		}
 		aim = InputManager.GetButton("Aim");
 		h = InputManager.GetAxis("Horizontal");
 		v = InputManager.GetAxis("Vertical");
-		run = InputManager.GetButton ("Run");
+		if (InputManager.GetButtonDown ("Run")) {
+			run = !run;
+		}
 		sprint = InputManager.GetButton ("Sprint");
 		isMoving = Mathf.Abs(h) > 0.1 || Mathf.Abs(v) > 0.1;
 	}
