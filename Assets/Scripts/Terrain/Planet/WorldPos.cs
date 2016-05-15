@@ -29,5 +29,10 @@ namespace Orbit.Terrain.Planet
                 return true;
             }
         }
+
+		public override int GetHashCode ()
+		{
+			return this.x.GetHashCode () + this.y.GetHashCode () + this.z.GetHashCode ();
+		}
     }
 }

@@ -14,11 +14,11 @@ namespace Orbit.Terrain.Planet
 
         public bool NeedsUpdate = true;
 
-        public static int CHUNK_SIZE = 16;
-
         public Planet Planet;
 
         public WorldPos Pos;
+
+		public const int CHUNK_SIZE = 16;
 
         MeshFilter Filter;
 
@@ -48,7 +48,6 @@ namespace Orbit.Terrain.Planet
                 {
                     for (int z = 0; z < CHUNK_SIZE; z++)
                     {
-                        Debug.Log(string.Format("Getting block at x:{0}, y:{1}, z:{2}", x, y, z));
                         meshData = Blocks[x, y, z].Blockdata(this, x, y, z, meshData);
                     }
                 }
@@ -61,6 +60,7 @@ namespace Orbit.Terrain.Planet
             Filter.mesh.Clear();
             Filter.mesh.vertices = meshData.Verticies.ToArray();
             Filter.mesh.triangles = meshData.Tris.ToArray();
+			Filter.mesh.uv = meshData.UV.ToArray();
             Filter.mesh.RecalculateNormals();
 
             Coll.sharedMesh = null;
@@ -74,8 +74,9 @@ namespace Orbit.Terrain.Planet
 
         public Block GetBlock(int x, int y, int z)
         {
-            Debug.Log(string.Format("Fetching x:{0}, y:{1}, z:{2}", x, y, z));
-            return Blocks[x, y, z];
+            if (InRange(x) && InRange(y) && InRange(z))
+                return Blocks[x, y, z];
+            return Planet.GetBlock(Pos.x + x, Pos.y + y, Pos.z + z);
         }
 
         public void SetBlock(int x, int y, int z, Block block)

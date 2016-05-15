@@ -3,18 +3,21 @@ using System.Collections;
 
 namespace Orbit.Terrain.Planet
 {
-    public enum Direction
-    {
-        North,
-        East,
-        South,
-        West,
-        Up,
-        Down,
-    }
-
     public class Block
     {
+		public struct TextureTile { public int x; public int y; }
+
+		public const float TILE_SIZE = 1.0f;
+
+		public enum Direction
+		{
+			North,
+			East,
+			South,
+			West,
+			Up,
+			Down,
+		}
 
         public Block()
         {
@@ -27,32 +30,32 @@ namespace Orbit.Terrain.Planet
 
             if (!chunk.GetBlock(x, y + 1, z).IsSolid(Direction.Down))
             {
-                meshData = FaceDataDown(chunk, x, y, z, meshData);
+                meshData = FaceDataUp(chunk, x, y, z, meshData);
             }
 
             if (!chunk.GetBlock(x, y - 1, z).IsSolid(Direction.Up))
             {
-                meshData = FaceDataUp(chunk, x, y, z, meshData);
+                meshData = FaceDataDown(chunk, x, y, z, meshData);
             }
 
             if (!chunk.GetBlock(x, y, z + 1).IsSolid(Direction.South))
             {
-                meshData = FaceDataSouth(chunk, x, y, z, meshData);
+                meshData = FaceDataNorth(chunk, x, y, z, meshData);
             }
 
             if (!chunk.GetBlock(x, y, z - 1).IsSolid(Direction.North))
             {
-                meshData = FaceDataNorth(chunk, x, y, z, meshData);
+                meshData = FaceDataSouth(chunk, x, y, z, meshData);
             }
 
             if (!chunk.GetBlock(x + 1, y, z).IsSolid(Direction.West))
             {
-                meshData = FaceDataWest(chunk, x, y, z, meshData);
+                meshData = FaceDataEast(chunk, x, y, z, meshData);
             }
 
             if (!chunk.GetBlock(x - 1, y, z).IsSolid(Direction.East))
             {
-                meshData = FaceDataEast(chunk, x, y, z, meshData);
+                meshData = FaceDataWest(chunk, x, y, z, meshData);
             }
 
             return meshData;
@@ -65,6 +68,8 @@ namespace Orbit.Terrain.Planet
             meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z + 0.5f));
             meshData.AddVertex(new Vector3(x - 0.5f, y - 0.5f, z + 0.5f));
             meshData.AddQuadTriangles();
+
+			meshData.UV.AddRange (FaceUVs (Direction.North));
             return meshData;
         }
 
@@ -74,7 +79,9 @@ namespace Orbit.Terrain.Planet
             meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z - 0.5f));
             meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z + 0.5f));
             meshData.AddVertex(new Vector3(x + 0.5f, y - 0.5f, z + 0.5f));
-            meshData.AddQuadTriangles();
+			meshData.AddQuadTriangles();
+
+			meshData.UV.AddRange (FaceUVs (Direction.East));
             return meshData;
         }
 
@@ -84,7 +91,9 @@ namespace Orbit.Terrain.Planet
             meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z - 0.5f));
             meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z - 0.5f));
             meshData.AddVertex(new Vector3(x + 0.5f, y - 0.5f, z - 0.5f));
-            meshData.AddQuadTriangles();
+			meshData.AddQuadTriangles();
+
+			meshData.UV.AddRange (FaceUVs (Direction.South));
             return meshData;
         }
 
@@ -94,7 +103,9 @@ namespace Orbit.Terrain.Planet
             meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z + 0.5f));
             meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z - 0.5f));
             meshData.AddVertex(new Vector3(x - 0.5f, y - 0.5f, z - 0.5f));
-            meshData.AddQuadTriangles();
+			meshData.AddQuadTriangles();
+
+			meshData.UV.AddRange (FaceUVs (Direction.West));
             return meshData;
         }
 
@@ -104,7 +115,9 @@ namespace Orbit.Terrain.Planet
             meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z + 0.5f));
             meshData.AddVertex(new Vector3(x + 0.5f, y + 0.5f, z - 0.5f));
             meshData.AddVertex(new Vector3(x - 0.5f, y + 0.5f, z - 0.5f));
-            meshData.AddQuadTriangles();
+			meshData.AddQuadTriangles();
+
+			meshData.UV.AddRange (FaceUVs (Direction.Up));
             return meshData;
         }
 
@@ -114,9 +127,31 @@ namespace Orbit.Terrain.Planet
             meshData.AddVertex(new Vector3(x + 0.5f, y - 0.5f, z - 0.5f));
             meshData.AddVertex(new Vector3(x + 0.5f, y - 0.5f, z + 0.5f));
             meshData.AddVertex(new Vector3(x - 0.5f, y - 0.5f, z + 0.5f));
-            meshData.AddQuadTriangles();
+			meshData.AddQuadTriangles();
+
+			meshData.UV.AddRange (FaceUVs (Direction.Down));
             return meshData;
         }
+
+		public virtual TextureTile TexturePosition(Direction direction)
+		{
+			TextureTile tile = new TextureTile ();
+			tile.x = 0;
+			tile.y = 0;
+
+			return tile;
+		}
+
+		public virtual Vector2[] FaceUVs(Direction direction)
+		{
+			Vector2[] UVs = new Vector2[4];
+			TextureTile tilePos = TexturePosition (direction);
+			UVs [0] = new Vector2 (TILE_SIZE * tilePos.x + TILE_SIZE, TILE_SIZE * tilePos.y);
+			UVs [1] = new Vector2 (TILE_SIZE * tilePos.x + TILE_SIZE, TILE_SIZE * tilePos.y + TILE_SIZE);
+			UVs [2] = new Vector2 (TILE_SIZE * tilePos.x, TILE_SIZE * tilePos.y + TILE_SIZE);
+			UVs [3] = new Vector2 (TILE_SIZE * tilePos.x, TILE_SIZE * tilePos.y);
+			return UVs;
+		}
 
         public virtual bool IsSolid(Direction direction)
         {

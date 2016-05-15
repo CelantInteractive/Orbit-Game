@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -14,11 +15,12 @@ namespace Orbit.Terrain.Planet
         // Use this for initialization
         void Start()
         {
-            for (int x = -2; x < 2; x++)
+            for (int x = 0; x < 1; x++)
             {
-                for (int y = -1; y < 1; y++)
+				Debug.Log (string.Format("Planet creation is on iteration x:{0}", x));
+                for (int y = 0; y < 1; y++)
                 {
-                    for (int z = -1; z < 1; z++)
+                    for (int z = 0; z < 1; z++)
                     {
                         CreateChunk(x * 16, y * 16, z * 16);
                     }
@@ -36,7 +38,9 @@ namespace Orbit.Terrain.Planet
         {
             WorldPos worldPos = new WorldPos(x, y, z);
 
-            GameObject newChunkObject = Instantiate(ChunkPrefab, new Vector3(x, y, z), Quaternion.Euler(Vector3.zero)) as GameObject;
+			GameObject newChunkObject = Instantiate(ChunkPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero)) as GameObject;
+			newChunkObject.transform.parent = gameObject.transform;
+			newChunkObject.transform.localPosition = new Vector3 (x, y, z);
 
             Chunk newChunk = newChunkObject.GetComponent<Chunk>();
 
@@ -45,7 +49,7 @@ namespace Orbit.Terrain.Planet
 
             Chunks.Add(worldPos, newChunk);
 
-            for (int xi = 0; xi < 16; x++)
+            for (int xi = 0; xi < 16; xi++)
             {
                 for (int yi = 0; yi < 16; yi++)
                 {
@@ -59,6 +63,7 @@ namespace Orbit.Terrain.Planet
                         {
                             SetBlock(x + xi, y + yi, z + zi, new BlockAir());
                         }
+
                     }
                 }
             }
