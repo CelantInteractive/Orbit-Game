@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using CoherentNoise.Generation;
+using CoherentNoise;
 
 namespace Orbit.Terrain.Planet
 {
@@ -14,11 +16,23 @@ namespace Orbit.Terrain.Planet
 
 		public int Radius = 16;
 
+		[HideInInspector]
 		public bool GenerationComplete = false;
+
+		[Header("Procedural generation settings")]
+		public int Seed = 0;
+		public float Scale = 1f;
+		public double Frequency = 1.0;
+		public double Lacunarity = 2.0;
+		public double Persistence = 0.5;
+		public int OctaveCount = 6;
+		private Generator PerlinGenerator;
 
         // Use this for initialization
         void Start()
-        {
+		{
+			PerlinGenerator = new GradientNoise (69696969);
+
 			int ChunkCount = Mathf.CeilToInt(Radius / Chunk.CHUNK_SIZE);
 
 			for (int x = -ChunkCount; x < ChunkCount; x++)
@@ -31,7 +45,7 @@ namespace Orbit.Terrain.Planet
                         CreateChunk(x * 16, y * 16, z * 16);
                     }
                 }
-            }
+			}
 
 			GenerationComplete = true;
         }
@@ -63,8 +77,10 @@ namespace Orbit.Terrain.Planet
                 {
                     for (int zi = 0; zi < 16; zi++)
                     {
-						if (( pos.x-center.x ) ^2 + (pos.y-center.y) ^2 + (pos.z-center.z) ^ 2 < radius^2)
-                        if (yi <= 16)
+						Generator PerlinGen = new GradientNoise (696969);
+						float heightModifier =  PerlinGen.GetValue (new Vector3(xi, yi, zi)) * Scale;
+						Debug.Log (heightModifier);
+						if (Vector3.Distance(new Vector3(x + xi, y + yi, z + zi), Vector3.zero) < Radius + heightModifier)
                         {
                             SetBlock(x + xi, y + yi, z + zi, new Block());
                         }

@@ -854,8 +854,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ChunkPrefab: {fileID: 104518, guid: 6193e643b07b91d47bc3ca8cdabe87a5, type: 2}
-  Radius: 128
+  Radius: 16
   GenerationComplete: 0
+  Seed: 0
+  Scale: 100
+  Frequency: 1
+  Lacunarity: 2
+  Persistence: 0.5
+  OctaveCount: 6
 --- !u!4 &1678995471
 Transform:
   m_ObjectHideFlags: 0
