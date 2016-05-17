@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using LibNoise.Unity;
+using LibNoise.Unity.Generator;
 using CoherentNoise.Generation;
 using CoherentNoise;
 
@@ -26,12 +28,16 @@ namespace Orbit.Terrain.Planet
 		public double Lacunarity = 2.0;
 		public double Persistence = 0.5;
 		public int OctaveCount = 6;
-		private Generator PerlinGenerator;
+		private ModuleBase PerlinGenerator;
 
         // Use this for initialization
         void Start()
 		{
-			PerlinGenerator = new GradientNoise (69696969);
+			PerlinGenerator = new Perlin ();
+
+			float random = UnityEngine.Random.Range (-99999f, 99999f);
+
+			Debug.Log (string.Format("Accepted x:{0}, y:{1}, z:{2} and got {3}", random, random, random, PerlinGenerator.GetValue (new Vector3 (random, random, random))));
 
 			int ChunkCount = Mathf.CeilToInt(Radius / Chunk.CHUNK_SIZE);
 
@@ -76,10 +82,17 @@ namespace Orbit.Terrain.Planet
                 for (int yi = 0; yi < 16; yi++)
                 {
                     for (int zi = 0; zi < 16; zi++)
-                    {
-						Generator PerlinGen = new GradientNoise (696969);
-						float heightModifier =  PerlinGen.GetValue (new Vector3(xi, yi, zi)) * Scale;
+					{
+
+						float random = UnityEngine.Random.Range (-99999f, 99999f);
+						Vector3 pos = new Vector3 ((float)xi * Scale, (float)yi * Scale, (float)zi * Scale);
+						double heightModifier =  PerlinGenerator.GetValue (new Vector3(-10000.1f, -20000.2f, -30000.3f));
+
+						Debug.Log (string.Format("Accepted x:{0}, y:{1}, z:{2} and got {3}", pos.x, pos.y, pos.z, heightModifier));
 						Debug.Log (heightModifier);
+						if (heightModifier == 0) {
+							//throw new Exception ();
+						}
 						if (Vector3.Distance(new Vector3(x + xi, y + yi, z + zi), Vector3.zero) < Radius + heightModifier)
                         {
                             SetBlock(x + xi, y + yi, z + zi, new Block());
