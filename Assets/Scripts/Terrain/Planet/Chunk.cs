@@ -18,9 +18,9 @@ namespace Orbit.Terrain.Planet
 
         public WorldPos Pos;
 
-		public bool GenerationComplete = false;
+        public bool GenerationComplete = false;
 
-		public const int CHUNK_SIZE = 16;
+        public const int CHUNK_SIZE = 16;
 
         MeshFilter Filter;
 
@@ -34,7 +34,7 @@ namespace Orbit.Terrain.Planet
 
         void Update()
         {
-			if (NeedsUpdate && Planet.GenerationComplete)
+            if (NeedsUpdate && Planet.GenerationComplete)
             {
                 NeedsUpdate = false;
                 UpdateChunk();
@@ -62,24 +62,24 @@ namespace Orbit.Terrain.Planet
             Filter.mesh.Clear();
             Filter.mesh.vertices = meshData.Verticies.ToArray();
             Filter.mesh.triangles = meshData.Tris.ToArray();
-			Filter.mesh.uv = meshData.UV.ToArray();
+            Filter.mesh.uv = meshData.UV.ToArray();
             Filter.mesh.RecalculateNormals();
 
             Coll.sharedMesh = null;
             Mesh mesh = new Mesh();
             mesh.vertices = meshData.ColVerticies.ToArray();
             mesh.triangles = meshData.ColTris.ToArray();
-			mesh.RecalculateNormals();
+            mesh.RecalculateNormals();
 
             Coll.sharedMesh = mesh;
         }
 
-		public Block GetBlock(int x, int y, int z)
-		{
-			if (InRange(x) && InRange(y) && InRange(z))
-				return Blocks[x, y, z];
-			return Planet.GetBlock(Pos.x + x, Pos.y + y, Pos.z + z);
-		}
+        public Block GetBlock(int x, int y, int z)
+        {
+            if (InRange(x) && InRange(y) && InRange(z))
+                return Blocks[x, y, z];
+            return Planet.GetBlock(Pos.x + x, Pos.y + y, Pos.z + z);
+        }
 
         public void SetBlock(int x, int y, int z, Block block)
         {
@@ -93,12 +93,12 @@ namespace Orbit.Terrain.Planet
             }
         }
 
-		public static bool InRange(int index)
-		{
-			if (index < 0 || index >= CHUNK_SIZE)
-				return false;
+        public static bool InRange(int index)
+        {
+            if (index < 0 || index >= CHUNK_SIZE)
+                return false;
 
-			return true;
-		}
+            return true;
+        }
     }
 }

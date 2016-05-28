@@ -16,44 +16,44 @@ namespace Orbit.Terrain.Planet
 
         public GameObject ChunkPrefab;
 
-		public int Radius = 16;
+        public int Radius = 16;
 
-		[HideInInspector]
-		public bool GenerationComplete = false;
+        [HideInInspector]
+        public bool GenerationComplete = false;
 
-		[Header("Procedural generation settings")]
-		public int Seed = 0;
-		public float Scale = 1f;
-		public double Frequency = 1.0;
-		public double Lacunarity = 2.0;
-		public double Persistence = 0.5;
-		public int OctaveCount = 6;
-		private ModuleBase PerlinGenerator;
+        [Header("Procedural generation settings")]
+        public int Seed = 0;
+        public float Scale = 1f;
+        public double Frequency = 1.0;
+        public double Lacunarity = 2.0;
+        public double Persistence = 0.5;
+        public int OctaveCount = 6;
+        private ModuleBase PerlinGenerator;
 
         // Use this for initialization
         void Start()
-		{
-			PerlinGenerator = new Perlin ();
+        {
+            PerlinGenerator = new Perlin();
 
-			float random = UnityEngine.Random.Range (-99999f, 99999f);
+            float random = UnityEngine.Random.Range(-99999f, 99999f);
 
-			Debug.Log (string.Format("Accepted x:{0}, y:{1}, z:{2} and got {3}", random, random, random, PerlinGenerator.GetValue (new Vector3 (random, random, random))));
+            Debug.Log(string.Format("Accepted x:{0}, y:{1}, z:{2} and got {3}", random, random, random, PerlinGenerator.GetValue(new Vector3(random, random, random))));
 
-			int ChunkCount = Mathf.CeilToInt(Radius / Chunk.CHUNK_SIZE);
+            int ChunkCount = Mathf.CeilToInt(Radius / Chunk.CHUNK_SIZE);
 
-			for (int x = -ChunkCount; x < ChunkCount; x++)
+            for (int x = -ChunkCount; x < ChunkCount; x++)
             {
-				Debug.Log (string.Format("Planet creation is on iteration x:{0}", x));
-				for (int y = -ChunkCount; y < ChunkCount; y++)
+                Debug.Log(string.Format("Planet creation is on iteration x:{0}", x));
+                for (int y = -ChunkCount; y < ChunkCount; y++)
                 {
-					for (int z = -ChunkCount; z < ChunkCount; z++)
+                    for (int z = -ChunkCount; z < ChunkCount; z++)
                     {
                         CreateChunk(x * 16, y * 16, z * 16);
                     }
                 }
-			}
+            }
 
-			GenerationComplete = true;
+            GenerationComplete = true;
         }
 
         // Update is called once per frame
@@ -66,9 +66,9 @@ namespace Orbit.Terrain.Planet
         {
             WorldPos worldPos = new WorldPos(x, y, z);
 
-			GameObject newChunkObject = Instantiate(ChunkPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero)) as GameObject;
-			newChunkObject.transform.parent = gameObject.transform;
-			newChunkObject.transform.localPosition = new Vector3 (x, y, z);
+            GameObject newChunkObject = Instantiate(ChunkPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero)) as GameObject;
+            newChunkObject.transform.parent = gameObject.transform;
+            newChunkObject.transform.localPosition = new Vector3(x, y, z);
 
             Chunk newChunk = newChunkObject.GetComponent<Chunk>();
 
@@ -82,18 +82,16 @@ namespace Orbit.Terrain.Planet
                 for (int yi = 0; yi < 16; yi++)
                 {
                     for (int zi = 0; zi < 16; zi++)
-					{
+                    {
+                        double heightModifier = PerlinGenerator.GetValue(new Vector3(xi + 0.01f, yi + 0.01f, zi + 0.01f));
 
-						float random = UnityEngine.Random.Range (-99999f, 99999f);
-						Vector3 pos = new Vector3 ((float)xi * Scale, (float)yi * Scale, (float)zi * Scale);
-						double heightModifier =  PerlinGenerator.GetValue (new Vector3(-10000.1f, -20000.2f, -30000.3f));
-
-						Debug.Log (string.Format("Accepted x:{0}, y:{1}, z:{2} and got {3}", pos.x, pos.y, pos.z, heightModifier));
-						Debug.Log (heightModifier);
-						if (heightModifier == 0) {
-							//throw new Exception ();
-						}
-						if (Vector3.Distance(new Vector3(x + xi, y + yi, z + zi), Vector3.zero) < Radius + heightModifier)
+                        Debug.Log(string.Format("Accepted x:{0}, y:{1}, z:{2} and got {3}", xi + 0.01f, yi, zi, heightModifier));
+                        Debug.Log(heightModifier);
+                        if (heightModifier == 0)
+                        {
+                            throw new Exception ();
+                        }
+                        if (Vector3.Distance(new Vector3(x + xi, y + yi, z + zi), Vector3.zero) < Radius - (heightModifier * Scale))
                         {
                             SetBlock(x + xi, y + yi, z + zi, new Block());
                         }
@@ -106,7 +104,7 @@ namespace Orbit.Terrain.Planet
                 }
             }
 
-			Debug.Log (string.Format ("Finished chunk generation for x:{0}, y:{1}, z:{2}", worldPos.x, worldPos.y, worldPos.z));
+            Debug.Log(string.Format("Finished chunk generation for x:{0}, y:{1}, z:{2}", worldPos.x, worldPos.y, worldPos.z));
         }
 
         public Chunk GetChunk(int x, int y, int z)
